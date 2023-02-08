@@ -1,27 +1,34 @@
 """This scripts trains and predicts a random forest
 with predetermined datasets."""
 
-from Formulas import upload1
-from Formulas import EDA1
-from Formulas import funciones1
-from Formulas import modelo1
+from src import upload
+from src import eda
+from src import funciones
+from src import modelo
+import logging
+
+logging.basicConfig(
+    level=logging.INFO,
+    filemode='w',
+    format='%(name)s - %(levelname)s - %(message)s')
 
 # Run the following: python main_tarea03_SE.py
 
 # 1. Upload data
 
-train_data, test_data = upload1.download_data("train.csv", "test.csv")
+train_data, test_data = upload.download_data("data/raw/train.csv", "data/raw/test.csv")
+logging.info("se cargaron los datos de entrenamiento y prueba")
 
 # 2. perform EDA
 
-EDA1.EDA1(train_data)
+eda.eda_function(train_data)
 
 # 3. Preprocess data
 
 # 3.1 filling missing data
 set1 = ['FireplaceQu', 'BsmtQual', 'BsmtCond', 'BsmtFinType1', 'BsmtFinType2']
-train_data, test_data = funciones1.missing_data1(train_data, test_data, set1)
-
+train_data, test_data = funciones.missing_data1(train_data, test_data, set1)
+logging.info("se terminó de rellenar los NA")
 # 3.2 dropping variables
 
 drop_col = ['Id', 'Alley', 'PoolQC', 'MiscFeature', 'Fence', 'MoSold',
@@ -33,9 +40,9 @@ drop_col = ['Id', 'Alley', 'PoolQC', 'MiscFeature', 'Fence', 'MoSold',
             'BsmtFinSF1', 'BsmtFinSF2', 'FireplaceQu', 'WoodDeckSF',
             'GarageQual', 'GarageCond', 'OverallCond']
 
-train_data = funciones1.dropping1(train_data, drop_col)
-test_data = funciones1.dropping1(test_data, drop_col)
-
+train_data = funciones.dropping1(train_data, drop_col)
+test_data = funciones.dropping1(test_data, drop_col)
+logging.info("se descartaron ciertas variables")
 # encoding ordinal variables
 cat1 = ['No', 'Po', 'Fa', 'TA', 'Gd', 'Ex']
 cat2 = ['N', 'P', 'Y']
@@ -67,23 +74,32 @@ ohe_col = {'MSZoning': cat6, 'Foundation': cat7, 'Neighborhood': cat8,
            'MasVnrType': cat9, 'SaleCondition': cat10, 'RoofStyle': cat11,
            'RoofMatl': cat12}
 
-train_data, test_data = funciones1.ordinal_encoder(train_data,
+train_data, test_data = funciones.ordinal_encoder(train_data,
                                                    test_data, ordinal_col)
 # train_data, test_data = funciones1.OHE1(train_data,test_data, ohe_col)
 # creating new variables
-train_data = funciones1.new_variables1(train_data)
-test_data = funciones1.new_variables1(test_data)
-
+train_data = funciones.new_variables1(train_data)
+test_data = funciones.new_variables1(test_data)
+logging.info("se definieron nuevas variables")
 # dropping columns
 drop_col1 = ['OverallQual', 'ExterCond', 'ExterQual', 'BsmtCond', 'BsmtQual',
              'BsmtFinType1', 'BsmtFinType2', 'HeatingQC', 'OpenPorchSF',
              'EnclosedPorch', '3SsnPorch', 'ScreenPorch', 'BsmtFullBath',
              'BsmtHalfBath', 'FullBath', 'HalfBath']
 
-train_data = funciones1.dropping1(train_data, drop_col1)
-test_data = funciones1.dropping1(test_data, drop_col1)
+train_data = funciones.dropping1(train_data, drop_col1)
+test_data = funciones.dropping1(test_data, drop_col1)
+
+print(train_data.shape)
+print(test_data.shape)
+print(train_data.columns)
+print(test_data.columns)
 
 # 4. Create the model
+try: 
+        modelofinal = modelo.modelo_random_forest(train_data)
+        prediccion = modelo.prediccion(test_data)
+except Exception as e:
+        logging.exception("hubo un error con el modelo")
 
-modelofinal1 = modelo1.modelo_random_forest(train_data)
-prediccion = modelo1.prediccion(test_data)
+
