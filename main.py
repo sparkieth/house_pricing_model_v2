@@ -6,17 +6,25 @@ from src import eda
 from src import funciones
 from src import modelo
 import logging
+import argparse, random, string
+
+parser = argparse.ArgumentParser(prog="randomforest", 
+    usage="whoa, use: %(prog)soriginal input columns",
+    description="creates a random forest model for house pricing with original columns",
+    epilog="you need to upload matrices with the original input columns")
+parser.add_argument('trainfilename')
+parser.add_argument('testfilename')
+
+args = parser.parse_args()
 
 logging.basicConfig(
     level=logging.INFO,
     filemode='w',
     format='%(name)s - %(levelname)s - %(message)s')
 
-# Run the following: python main_tarea03_SE.py
-
 # 1. Upload data
 
-train_data, test_data = upload.download_data("data/raw/train.csv", "data/raw/test.csv")
+train_data, test_data = upload.download_data(args.trainfilename, args.testfilename)
 logging.info("se cargaron los datos de entrenamiento y prueba")
 
 # 2. perform EDA
@@ -31,14 +39,11 @@ train_data, test_data = funciones.missing_data1(train_data, test_data, set1)
 logging.info("se terminó de rellenar los NA")
 # 3.2 dropping variables
 
-drop_col = ['Id', 'Alley', 'PoolQC', 'MiscFeature', 'Fence', 'MoSold',
-            'YrSold', 'MSSubClass', 'GarageType', 'GarageArea', 'GarageYrBlt',
-            'GarageFinish', 'YearRemodAdd', 'LandSlope', 'BsmtUnfSF',
-            'BsmtExposure', '2ndFlrSF', 'LowQualFinSF', 'Condition1',
-            'Condition2', 'Heating', 'Exterior1st', 'Exterior2nd',
-            'HouseStyle', 'LotShape', 'LandContour', 'LotConfig', 'Functional',
-            'BsmtFinSF1', 'BsmtFinSF2', 'FireplaceQu', 'WoodDeckSF',
-            'GarageQual', 'GarageCond', 'OverallCond']
+drop_col = ['Alley', 'PoolQC', 'MiscFeature', 'Fence', 'MoSold', 'YrSold', 'MSSubClass',
+            'GarageType', 'GarageArea', 'GarageYrBlt', 'GarageFinish', 'YearRemodAdd', 'LandSlope',
+            'BsmtUnfSF', 'BsmtExposure', '2ndFlrSF', 'LowQualFinSF', 'Condition1', 'Condition2', 'Heating',
+             'Exterior1st', 'Exterior2nd', 'HouseStyle', 'LotShape', 'LandContour', 'LotConfig', 'Functional',
+             'BsmtFinSF1', 'BsmtFinSF2', 'FireplaceQu', 'WoodDeckSF', 'GarageQual', 'GarageCond', 'OverallCond']
 
 train_data = funciones.dropping1(train_data, drop_col)
 test_data = funciones.dropping1(test_data, drop_col)
@@ -97,8 +102,8 @@ print(test_data.columns)
 
 # 4. Create the model
 try: 
-        modelofinal = modelo.modelo_random_forest(train_data)
-        prediccion = modelo.prediccion(test_data)
+         modelofinal = modelo.modelo_random_forest(train_data,test_data,max_leaf=50)
+         logging.info("el modelo se corrió con éxito")
 except Exception as e:
         logging.exception("hubo un error con el modelo")
 
