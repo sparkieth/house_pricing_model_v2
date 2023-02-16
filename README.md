@@ -1,4 +1,4 @@
-# house_pricing_model_v2
+# Ejercicio. Modelo de random forest para predecir precios de casas
 
 El archivo main.py genera un modelo random forest para predecir precios de casas con las columnas inicialmente determinadas. 
 
