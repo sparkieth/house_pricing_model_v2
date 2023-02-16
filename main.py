@@ -14,6 +14,7 @@ parser = argparse.ArgumentParser(prog="randomforest",
     epilog="you need to upload matrices with the original input columns")
 parser.add_argument('trainfilename')
 parser.add_argument('testfilename')
+parser.add_argument('max_leaves',type=int)
 
 args = parser.parse_args()
 
@@ -102,7 +103,7 @@ print(test_data.columns)
 
 # 4. Create the model
 try: 
-         modelofinal = modelo.modelo_random_forest(train_data,test_data,max_leaf=50)
+         modelofinal = modelo.modelo_random_forest(train_data,test_data,args.max_leaves)
          logging.info("el modelo se corrió con éxito")
 except Exception as e:
         logging.exception("hubo un error con el modelo")
