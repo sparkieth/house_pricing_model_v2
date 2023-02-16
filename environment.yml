@@ -1,0 +1,19 @@
+name: itam
+channels:
+ - conda-forge
+ - defaults
+dependencies: 
+ - pandas
+ - pytest
+ - scipy
+ - pip
+ - seaborn
+ - matplotlib
+ - scikit-learn
+ - joblib
+ - pylint
+ - flake8
+ - autopep8
+ - numpy
+ - ipython
+ - jupyterlab
